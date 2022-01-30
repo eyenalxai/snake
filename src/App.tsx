@@ -23,6 +23,7 @@ export function App() {
 
   const [isCollision, setIsCollision] = useState(false)
 
+  const [headWasTurnedThisMove, setHeadWasTurnedThisMove] = useState(false)
   const [headPosition, setHeadPosition] = useState<Position>(STARTING_HEAD_POSITION)
   const [snakeBody, setSnakeBody] = useState<Position[]>([STARTING_HEAD_POSITION])
   const [fruitPosition, setFruitPosition] = useState(generateFruitPosition([STARTING_HEAD_POSITION]))
@@ -34,6 +35,12 @@ export function App() {
   const setDirectionRef = (dir: Direction) => {
     directionRef.current = dir
     setDirection(dir)
+  }
+
+  const headWasTurnedThisMoveRef = useRef(headWasTurnedThisMove)
+  const setHeadWasTurnedThisMoveRef = (wasTurned: boolean) => {
+    headWasTurnedThisMoveRef.current = wasTurned
+    setHeadWasTurnedThisMove(wasTurned)
   }
 
   const [tickRate, setTickRate] = useState(STARTING_TICKRATE)
@@ -83,23 +90,32 @@ export function App() {
           setFruitPosition(generateFruitPosition(snakeBody))
           setTickRate((sp) => decreaseTickrate(sp))
         }
+        setHeadWasTurnedThisMoveRef(false)
       }
     }, tickRate)
 
-    window.addEventListener("keypress", (e) => wasdListener(e, directionRef, setDirectionRef))
+    window.addEventListener("keypress", (e) => wasdListener({
+      e,
+      directionRef,
+      setDirectionRef,
+      headWasTurnedThisMoveRef,
+      setHeadWasTurnedThisMoveRef
+    }))
 
     return () => clearInterval(interval)
   }, [
     direction,
-    isCollision,
     fruitPosition,
     headPosition,
+    headPositionWhenFruitSpawned,
+    headWasTurnedThisMove,
+    isCollision,
+    maxScore,
+    score,
     snakeBody,
     snakeSize,
-    tickRate,
-    score, maxScore,
     sourceUrlShown,
-    headPositionWhenFruitSpawned
+    tickRate
   ])
 
   return (

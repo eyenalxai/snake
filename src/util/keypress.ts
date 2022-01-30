@@ -19,26 +19,42 @@ function isValidKeypress(key: string, currentDirection: Direction): boolean {
   }
 }
 
-export function wasdListener(
-  e: KeyboardEvent,
-  directionRef: MutableRefObject<Direction>,
+export interface wasdListenerProps {
+  e: KeyboardEvent
+  directionRef: MutableRefObject<Direction>
   // eslint-disable-next-line no-unused-vars
   setDirectionRef: (dir: Direction) => void
-) {
+  headWasTurnedThisMoveRef: MutableRefObject<boolean>
+  // eslint-disable-next-line no-unused-vars
+  setHeadWasTurnedThisMoveRef: (kek: boolean) => void
+}
+
+export function wasdListener({
+  e,
+  directionRef,
+  setDirectionRef,
+  headWasTurnedThisMoveRef,
+  setHeadWasTurnedThisMoveRef
+}: wasdListenerProps) {
   const { code } = e
-  if (isValidKeypress(code, directionRef.current)) {
+
+  if (!headWasTurnedThisMoveRef.current && isValidKeypress(code, directionRef.current)) {
     switch (code) {
       case "KeyW":
         setDirectionRef("up")
+        setHeadWasTurnedThisMoveRef(true)
         break
       case "KeyA":
         setDirectionRef("left")
+        setHeadWasTurnedThisMoveRef(true)
         break
       case "KeyS":
         setDirectionRef("down")
+        setHeadWasTurnedThisMoveRef(true)
         break
       case "KeyD":
         setDirectionRef("right")
+        setHeadWasTurnedThisMoveRef(true)
         break
       default:
         break
