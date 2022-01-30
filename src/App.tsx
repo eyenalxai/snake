@@ -1,19 +1,15 @@
 import { useEffect, useRef, useState } from "react"
 import { isEqual } from "lodash"
 import { Direction, Position } from "./type"
-import {
-  checkBodyCollision,
-  decreaseSpeed,
-  generateFruitPosition, getScoreFromLocalStorage,
-  updateBody,
-  updatePosition,
-  wasdListener
-} from "./util"
+import { decreaseSpeed, getScoreFromLocalStorage } from "./util/other"
 import { Playfield } from "./component/playfield/Playfield"
 import { Controls } from "./component/controls/Controls"
 import { Container } from "./component/Container"
 import { GITHUB_URL, LOCALSTORE_MAX_SCORE, STARTING_HEAD_POSITION, STARTING_SNAKE_SIZE, STARTING_SPEED } from "./config"
 import { Menu } from "./component/menu/Menu"
+import { wasdListener } from "./util/keypress"
+import { generateFruitPosition, updatePosition } from "./util/position"
+import { checkBodyCollision, updateBody } from "./util/body"
 
 export function App() {
   const [sourceUrlShown, setSourceUrlShown] = useState(false)

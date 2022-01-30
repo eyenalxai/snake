@@ -10,7 +10,7 @@ interface MenuProps {
 
 export function Menu({ score, maxScore, isCollision, restart }: MenuProps) {
   return (
-    <div className="flex justify-between h-10">
+    <div className="flex justify-between items-center h-10 mb-2">
       <Score score={score} maxScore={maxScore} />
       <Restart isCollision={isCollision} restart={restart} />
     </div>

@@ -1,5 +1,5 @@
 import { Direction } from "../../type"
-import { isDirectionConflict } from "../../util"
+import { isDirectionConflict } from "../../util/other"
 import { ControlsProps } from "./Controls"
 
 interface DirectionButtonProps {

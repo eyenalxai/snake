@@ -8,7 +8,7 @@ export function Restart({ isCollision, restart }: RestartProps) {
 
   return (
     <button
-      className="text-gray-700 dark:text-gray-300 ml-2 bg-gray-300 dark:bg-gray-700 w-28 h-8  rounded mb-2"
+      className="text-gray-700 dark:text-gray-300 bg-gray-300 dark:bg-gray-700 w-28 h-8 rounded"
       type="button"
       onClick={restart}
     >

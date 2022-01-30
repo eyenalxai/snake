@@ -1,5 +1,5 @@
-import { getBorderSide, paint } from "../../util"
 import { Direction } from "../../type"
+import { getBorderSide, getCellColors } from "../../util/colors"
 
 interface CellProps {
   isFruit: boolean
@@ -15,7 +15,7 @@ export function Cell({ isFruit, isSnakeBody, isHead, currentDirection }: CellPro
         h-7 w-7 
         border border-gray-100 dark:border-gray-800
         ${isFruit && "transition duration-1000"}
-        ${paint(isFruit, isSnakeBody, isHead, getBorderSide(currentDirection))}`}
+        ${getCellColors(isFruit, isSnakeBody, isHead, getBorderSide(currentDirection))}`}
     />
   )
 }
