@@ -10,9 +10,9 @@ export function comparePosition(first: Position, second: Position) {
   return isEqual(first, second)
 }
 
-export function paint(celLoc: Position, headLoc: Position, fruitLoc: Position) {
-  if (comparePosition(celLoc, headLoc)) return "bg-gray-400"
-  if (comparePosition(celLoc, fruitLoc)) return "bg-gray-600"
+export function paint(isFruit: boolean, isSnakeBody: boolean) {
+  if (isSnakeBody) return "bg-gray-400"
+  if (isFruit) return "bg-gray-600"
   return "bg-gray-300"
 }
 
@@ -36,9 +36,10 @@ function getRandomPosition(): Position {
   return [random(0, DIMENSIONS - 1, false), random(0, DIMENSIONS - 1, false)]
 }
 
-export function generateFruitPosition(headLoc: Position) {
+export function generateFruitPosition(snakeBody: Position[]) {
   let fruitLoc: Position = getRandomPosition()
-  while (isEqual(fruitLoc, headLoc)) {
+  // eslint-disable-next-line no-loop-func
+  while (snakeBody.some((position) => isEqual(position, fruitLoc))) {
     fruitLoc = getRandomPosition()
   }
   return fruitLoc
@@ -84,4 +85,9 @@ export function isValidKeypress(key: string, currentDirection: Direction) {
     default:
       return false
   }
+}
+
+export function updateBody(snakeBody: Position[], headPosition: Position, size: number) {
+  snakeBody.push(headPosition)
+  return snakeBody.slice(-size)
 }
