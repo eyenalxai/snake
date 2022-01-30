@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react"
+import { isEqual } from "lodash"
 import { Direction, Position } from "./type"
 import {
-  comparePosition,
+  checkBodyCollision,
   decreaseSpeed,
   generateFruitPosition,
   isValidKeypress,
@@ -12,6 +13,8 @@ import { Playfield } from "./component/playfield/Playfield"
 import { Controls } from "./component/controls/Controls"
 
 export function App() {
+  const [collision, setCollision] = useState(false)
+
   const [headPosition, setHeadPosition] = useState<Position>([6, 6])
   const [snakeBody, setSnakeBody] = useState<Position[]>([headPosition])
   const [fruitPosition, setFruitPosition] = useState(generateFruitPosition(snakeBody))
@@ -32,42 +35,41 @@ export function App() {
   useEffect(() => {
     const interval = setInterval(() => {
       setHeadPosition((currentLoc) => updatePosition(direction, currentLoc))
+      if (checkBodyCollision(snakeBody, headPosition)) setCollision(true)
 
-      if (comparePosition(headPosition, fruitPosition)) {
+      if (isEqual(headPosition, fruitPosition)) {
         setScore((sc) => sc + 10)
         setSnakeSize((sz) => sz + 1)
         setFruitPosition(generateFruitPosition(snakeBody))
         setSpeed((sp) => decreaseSpeed(sp))
       }
-
-      setSnakeBody(updateBody(snakeBody, headPosition, snakeSize))
+      if (!collision) setSnakeBody(updateBody(snakeBody, headPosition, snakeSize))
     }, speed)
 
-    // @ts-ignore
-    // eslint-disable-next-line consistent-return
     window.addEventListener("keypress", (e) => {
       const { key } = e
       if (isValidKeypress(key, directionRef.current)) {
         switch (key) {
           case "w":
             setDirectionRef("up")
-            return () => clearInterval(interval)
+            break
           case "a":
             setDirectionRef("left")
-            return () => clearInterval(interval)
+            break
           case "s":
             setDirectionRef("down")
-            return () => clearInterval(interval)
+            break
           case "d":
             setDirectionRef("right")
-            return () => clearInterval(interval)
+            break
           default:
+            break
         }
       }
     })
 
     return () => clearInterval(interval)
-  }, [direction, fruitPosition, headPosition, snakeBody, snakeSize, speed])
+  }, [direction, collision, fruitPosition, headPosition, snakeBody, snakeSize, speed])
 
   return (
     <div className="container mx-auto mt-24 max-w-max">

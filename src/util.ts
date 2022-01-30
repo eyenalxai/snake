@@ -2,21 +2,17 @@ import { isEqual, random } from "lodash"
 import { DIMENSIONS } from "./config"
 import { Direction, Position } from "./type"
 
-export function decreaseSpeed(speed: number) {
+export function decreaseSpeed(speed: number): number {
   return speed <= 100 ? speed : speed - 10
 }
 
-export function comparePosition(first: Position, second: Position) {
-  return isEqual(first, second)
-}
-
-export function paint(isFruit: boolean, isSnakeBody: boolean) {
+export function paint(isFruit: boolean, isSnakeBody: boolean): string {
   if (isSnakeBody) return "bg-gray-400"
   if (isFruit) return "bg-gray-600"
   return "bg-gray-300"
 }
 
-export function updatePosition(direction: Direction, currentPosition: Position): [number, number] {
+export function updatePosition(direction: Direction, currentPosition: Position): Position {
   const [x, y] = currentPosition
   switch (direction) {
     case "right":
@@ -36,7 +32,7 @@ function getRandomPosition(): Position {
   return [random(0, DIMENSIONS - 1, false), random(0, DIMENSIONS - 1, false)]
 }
 
-export function generateFruitPosition(snakeBody: Position[]) {
+export function generateFruitPosition(snakeBody: Position[]): Position {
   let fruitLoc: Position = getRandomPosition()
   // eslint-disable-next-line no-loop-func
   while (snakeBody.some((position) => isEqual(position, fruitLoc))) {
@@ -45,7 +41,7 @@ export function generateFruitPosition(snakeBody: Position[]) {
   return fruitLoc
 }
 
-export function isDirectionConflict(direction: Direction, currentDirection: Direction) {
+export function isDirectionConflict(direction: Direction, currentDirection: Direction): boolean {
   if (direction === currentDirection) {
     return true
   }
@@ -70,7 +66,7 @@ export function isDirectionConflict(direction: Direction, currentDirection: Dire
   return false
 }
 
-export function isValidKeypress(key: string, currentDirection: Direction) {
+export function isValidKeypress(key: string, currentDirection: Direction): boolean {
   if (!["w", "a", "s", "d"].includes(key)) return false
 
   switch (key) {
@@ -87,7 +83,12 @@ export function isValidKeypress(key: string, currentDirection: Direction) {
   }
 }
 
-export function updateBody(snakeBody: Position[], headPosition: Position, size: number) {
+export function updateBody(snakeBody: Position[], headPosition: Position, size: number): Position[] {
   snakeBody.push(headPosition)
   return snakeBody.slice(-size)
+}
+
+export function checkBodyCollision(snakeBody: Position[], headPosition: Position): boolean {
+  if (snakeBody.length > 3) return snakeBody.filter((pos) => isEqual(pos, headPosition)).length > 0
+  return false
 }
