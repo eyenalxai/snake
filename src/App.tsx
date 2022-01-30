@@ -25,9 +25,9 @@ export function App() {
   const [direction, setDirection] = useState<Direction>("up")
 
   const directionRef = useRef(direction)
-  const setDirectionRef = (data: Direction) => {
-    directionRef.current = data
-    setDirection(data)
+  const setDirectionRef = (dir: Direction) => {
+    directionRef.current = dir
+    setDirection(dir)
   }
 
   const [speed, setSpeed] = useState(STARTING_SPEED)
@@ -42,7 +42,7 @@ export function App() {
     if (playfieldRef.current) playfieldRef.current.focus()
     setHeadPosition(STARTING_HEAD_POSITION)
     setSnakeBody([STARTING_HEAD_POSITION])
-    setDirection("up")
+    setDirectionRef("up")
 
     setSpeed(STARTING_SPEED)
     setSnakeSize(STARTING_SNAKE_SIZE)
