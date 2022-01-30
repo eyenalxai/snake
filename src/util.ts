@@ -72,16 +72,16 @@ export function isDirectionConflict(direction: Direction, currentDirection: Dire
 }
 
 export function isValidKeypress(key: string, currentDirection: Direction): boolean {
-  if (!["w", "a", "s", "d"].includes(key)) return false
+  if (!["KeyW", "KeyA", "KeyS", "KeyD"].includes(key)) return false
 
   switch (key) {
-    case "w":
+    case "KeyW":
       return !isDirectionConflict("up", currentDirection)
-    case "a":
+    case "KeyA":
       return !isDirectionConflict("left", currentDirection)
-    case "s":
+    case "KeyS":
       return !isDirectionConflict("down", currentDirection)
-    case "d":
+    case "KeyD":
       return !isDirectionConflict("right", currentDirection)
     default:
       return false
@@ -119,19 +119,19 @@ export function wasdListener(
   // eslint-disable-next-line no-unused-vars
   setDirectionRef: (dir: Direction) => void
 ) {
-  const { key } = e
-  if (isValidKeypress(key, directionRef.current)) {
-    switch (key) {
-      case "w":
+  const { code } = e
+  if (isValidKeypress(code, directionRef.current)) {
+    switch (code) {
+      case "KeyW":
         setDirectionRef("up")
         break
-      case "a":
+      case "KeyA":
         setDirectionRef("left")
         break
-      case "s":
+      case "KeyS":
         setDirectionRef("down")
         break
-      case "d":
+      case "KeyD":
         setDirectionRef("right")
         break
       default:
