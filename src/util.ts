@@ -1,15 +1,20 @@
 import { isEqual, random } from "lodash"
-import { DIMENSIONS } from "./config"
+import { MutableRefObject } from "react"
+import { DIMENSIONS, MIN_SPEED, SPEED_STEP } from "./config"
 import { Direction, Position } from "./type"
 
 export function decreaseSpeed(speed: number): number {
-  return speed <= 100 ? speed : speed - 10
+  return speed <= MIN_SPEED ? speed : speed - SPEED_STEP
 }
 
-export function paint(isFruit: boolean, isSnakeBody: boolean): string {
-  if (isSnakeBody) return "bg-gray-400"
-  if (isFruit) return "bg-gray-600"
-  return "bg-gray-300"
+export function paint(isFruit: boolean, isSnakeBody: boolean, isHead: boolean, direction: string): string {
+  if (isHead) {
+    return `bg-gray-500 dark:bg-gray-400
+    border-${direction}-gray-900  dark:border-${direction}-amber-500 border-${direction}-4 dark:border-${direction}-4`
+  }
+  if (isSnakeBody) return "bg-gray-400 dark:bg-gray-500"
+  if (isFruit) return "bg-green-300 dark:bg-green-300"
+  return "bg-gray-200 dark:bg-gray-700"
 }
 
 export function updatePosition(direction: Direction, currentPosition: Position): Position {
@@ -89,6 +94,48 @@ export function updateBody(snakeBody: Position[], headPosition: Position, size: 
 }
 
 export function checkBodyCollision(snakeBody: Position[], headPosition: Position): boolean {
-  if (snakeBody.length > 3) return snakeBody.filter((pos) => isEqual(pos, headPosition)).length > 0
+  if (snakeBody.length >= 1) return snakeBody.filter((pos) => isEqual(pos, headPosition)).length > 0
   return false
+}
+
+// eslint-disable-next-line consistent-return
+export function getBorderSide(direction: Direction): string {
+  // eslint-disable-next-line default-case
+  switch (direction) {
+    case "up":
+      return "t"
+    case "down":
+      return "b"
+    case "left":
+      return "l"
+    case "right":
+      return "r"
+  }
+}
+
+export function wasdListener(
+  e: KeyboardEvent,
+  directionRef: MutableRefObject<Direction>,
+  // eslint-disable-next-line no-unused-vars
+  setDirectionRef: (dir: Direction) => void
+) {
+  const { key } = e
+  if (isValidKeypress(key, directionRef.current)) {
+    switch (key) {
+      case "w":
+        setDirectionRef("up")
+        break
+      case "a":
+        setDirectionRef("left")
+        break
+      case "s":
+        setDirectionRef("down")
+        break
+      case "d":
+        setDirectionRef("right")
+        break
+      default:
+        break
+    }
+  }
 }

@@ -5,19 +5,22 @@ import {
   checkBodyCollision,
   decreaseSpeed,
   generateFruitPosition,
-  isValidKeypress,
   updateBody,
-  updatePosition
+  updatePosition,
+  wasdListener
 } from "./util"
 import { Playfield } from "./component/playfield/Playfield"
 import { Controls } from "./component/controls/Controls"
+import { Container } from "./component/Container"
+import { STARTING_HEAD_POSITION, STARTING_SNAKE_SIZE, STARTING_SPEED } from "./config"
+import { Menu } from "./component/menu/Menu"
 
 export function App() {
-  const [collision, setCollision] = useState(false)
+  const [isCollision, setIsCollision] = useState(false)
 
-  const [headPosition, setHeadPosition] = useState<Position>([6, 6])
-  const [snakeBody, setSnakeBody] = useState<Position[]>([headPosition])
-  const [fruitPosition, setFruitPosition] = useState(generateFruitPosition(snakeBody))
+  const [headPosition, setHeadPosition] = useState<Position>(STARTING_HEAD_POSITION)
+  const [snakeBody, setSnakeBody] = useState<Position[]>([STARTING_HEAD_POSITION])
+  const [fruitPosition, setFruitPosition] = useState(generateFruitPosition([STARTING_HEAD_POSITION]))
 
   const [direction, setDirection] = useState<Direction>("up")
 
@@ -27,54 +30,59 @@ export function App() {
     setDirection(data)
   }
 
-  const [speed, setSpeed] = useState(200)
-  const [snakeSize, setSnakeSize] = useState(1)
+  const [speed, setSpeed] = useState(STARTING_SPEED)
+  const [snakeSize, setSnakeSize] = useState(STARTING_SNAKE_SIZE)
 
-  const [, setScore] = useState(0)
+  const [score, setScore] = useState(0)
+
+  const playfieldRef = useRef<HTMLDivElement>(null)
+
+  function restart() {
+    if (playfieldRef.current) playfieldRef.current.focus()
+    setHeadPosition(STARTING_HEAD_POSITION)
+    setSnakeBody([STARTING_HEAD_POSITION])
+    setDirection("up")
+
+    setSpeed(STARTING_SPEED)
+    setSnakeSize(STARTING_SNAKE_SIZE)
+    setScore(0)
+
+    setIsCollision(false)
+  }
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setHeadPosition((currentLoc) => updatePosition(direction, currentLoc))
-      if (checkBodyCollision(snakeBody, headPosition)) setCollision(true)
+      if (checkBodyCollision(snakeBody, updatePosition(direction, headPosition))) setIsCollision(true)
+      if (!isCollision) {
+        setHeadPosition(updatePosition(direction, headPosition))
+        setSnakeBody(updateBody(snakeBody, headPosition, snakeSize))
 
-      if (isEqual(headPosition, fruitPosition)) {
-        setScore((sc) => sc + 10)
-        setSnakeSize((sz) => sz + 1)
-        setFruitPosition(generateFruitPosition(snakeBody))
-        setSpeed((sp) => decreaseSpeed(sp))
-      }
-      if (!collision) setSnakeBody(updateBody(snakeBody, headPosition, snakeSize))
-    }, speed)
-
-    window.addEventListener("keypress", (e) => {
-      const { key } = e
-      if (isValidKeypress(key, directionRef.current)) {
-        switch (key) {
-          case "w":
-            setDirectionRef("up")
-            break
-          case "a":
-            setDirectionRef("left")
-            break
-          case "s":
-            setDirectionRef("down")
-            break
-          case "d":
-            setDirectionRef("right")
-            break
-          default:
-            break
+        if (isEqual(headPosition, fruitPosition)) {
+          setSnakeSize((sz) => sz + 1)
+          setScore((sc) => sc + snakeSize + 1)
+          setFruitPosition(generateFruitPosition(snakeBody))
+          setSpeed((sp) => decreaseSpeed(sp))
         }
       }
-    })
+    }, speed)
+
+    window.addEventListener("keypress", (e) => wasdListener(e, directionRef, setDirectionRef))
 
     return () => clearInterval(interval)
-  }, [direction, collision, fruitPosition, headPosition, snakeBody, snakeSize, speed])
+  }, [direction, isCollision, fruitPosition, headPosition, snakeBody, snakeSize, speed])
 
   return (
-    <div className="container mx-auto mt-24 max-w-max">
-      <Playfield fruitPosition={fruitPosition} snakeBody={snakeBody} />
+    <Container>
+      <Menu score={score} isCollision={isCollision} restart={() => restart()} />
+
+      <Playfield
+        ref={playfieldRef}
+        fruitPosition={fruitPosition}
+        snakeBody={snakeBody}
+        headPosition={headPosition}
+        currentDirection={direction}
+      />
       <Controls currentDirection={direction} onClick={setDirection} />
-    </div>
+    </Container>
   )
 }

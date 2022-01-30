@@ -14,10 +14,11 @@ export function DirectionButton({ direction, currentDirection, onClick }: Contro
       disabled={disabled}
       onClick={() => onClick(direction)}
       type="button"
-      className={`w-24 h-14 transition bg-gray-300
-        ${disabled ? "text-gray-500" : "text-gray-800"}
+      className={`  
+        w-24 h-16 m-2 transition duration-200 rounded-lg
+        bg-gray-200 dark:bg-gray-600 
+        ${disabled ? "text-gray-500 dark:text-gray-400" : "text-gray-800 dark:text-gray-100 "}
         ${direction === "up" ? "col-span-3" : "col-span-1"}
-        rounded p-1 m-1
       `}
     >
       {direction.toUpperCase()}
