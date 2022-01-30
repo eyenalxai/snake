@@ -12,10 +12,12 @@ import {
 import { Playfield } from "./component/playfield/Playfield"
 import { Controls } from "./component/controls/Controls"
 import { Container } from "./component/Container"
-import { LOCALSTORE_MAX_SCORE, STARTING_HEAD_POSITION, STARTING_SNAKE_SIZE, STARTING_SPEED } from "./config"
+import { GITHUB_URL, LOCALSTORE_MAX_SCORE, STARTING_HEAD_POSITION, STARTING_SNAKE_SIZE, STARTING_SPEED } from "./config"
 import { Menu } from "./component/menu/Menu"
 
 export function App() {
+  const [sourceUrlShown, setSourceUrlShown] = useState(false)
+
   const [isCollision, setIsCollision] = useState(false)
 
   const [headPosition, setHeadPosition] = useState<Position>(STARTING_HEAD_POSITION)
@@ -54,6 +56,12 @@ export function App() {
   }
 
   useEffect(() => {
+    if (!sourceUrlShown) {
+      // eslint-disable-next-line no-console
+      console.log("Source code:", GITHUB_URL)
+      setSourceUrlShown(true)
+    }
+
     const interval = setInterval(() => {
       if (checkBodyCollision(snakeBody, updatePosition(direction, headPosition))) {
         setIsCollision(true)
@@ -76,7 +84,9 @@ export function App() {
     window.addEventListener("keypress", (e) => wasdListener(e, directionRef, setDirectionRef))
 
     return () => clearInterval(interval)
-  }, [direction, isCollision, fruitPosition, headPosition, snakeBody, snakeSize, speed, score, maxScore])
+  }, [
+    direction, isCollision, fruitPosition, headPosition, snakeBody, snakeSize, speed, score, maxScore, sourceUrlShown
+  ])
 
   return (
     <Container>
