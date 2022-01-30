@@ -8,3 +8,5 @@ export const STARTING_SNAKE_SIZE = 1
 export const STARTING_SPEED = 400
 export const MIN_SPEED = 40
 export const SPEED_STEP = MIN_SPEED / 8
+
+export const LOCALSTORE_MAX_SCORE = "max-score"

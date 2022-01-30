@@ -1,6 +1,6 @@
 import { isEqual, random } from "lodash"
 import { MutableRefObject } from "react"
-import { DIMENSIONS, MIN_SPEED, SPEED_STEP } from "./config"
+import { DIMENSIONS, LOCALSTORE_MAX_SCORE, MIN_SPEED, SPEED_STEP } from "./config"
 import { Direction, Position } from "./type"
 
 export function decreaseSpeed(speed: number): number {
@@ -138,4 +138,10 @@ export function wasdListener(
         break
     }
   }
+}
+
+export function getScoreFromLocalStorage(): number {
+  const score = localStorage.getItem(LOCALSTORE_MAX_SCORE)
+  if (score) return Number(score)
+  return 0
 }

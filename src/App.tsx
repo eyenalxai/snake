@@ -4,7 +4,7 @@ import { Direction, Position } from "./type"
 import {
   checkBodyCollision,
   decreaseSpeed,
-  generateFruitPosition,
+  generateFruitPosition, getScoreFromLocalStorage,
   updateBody,
   updatePosition,
   wasdListener
@@ -12,7 +12,7 @@ import {
 import { Playfield } from "./component/playfield/Playfield"
 import { Controls } from "./component/controls/Controls"
 import { Container } from "./component/Container"
-import { STARTING_HEAD_POSITION, STARTING_SNAKE_SIZE, STARTING_SPEED } from "./config"
+import { LOCALSTORE_MAX_SCORE, STARTING_HEAD_POSITION, STARTING_SNAKE_SIZE, STARTING_SPEED } from "./config"
 import { Menu } from "./component/menu/Menu"
 
 export function App() {
@@ -33,7 +33,8 @@ export function App() {
   const [speed, setSpeed] = useState(STARTING_SPEED)
   const [snakeSize, setSnakeSize] = useState(STARTING_SNAKE_SIZE)
 
-  const [score, setScore] = useState(0)
+  const [score, setScore] = useState<number>(0)
+  const [maxScore, setMaxScore] = useState<number>(getScoreFromLocalStorage())
 
   const playfieldRef = useRef<HTMLDivElement>(null)
 
@@ -45,14 +46,20 @@ export function App() {
 
     setSpeed(STARTING_SPEED)
     setSnakeSize(STARTING_SNAKE_SIZE)
+
     setScore(0)
+    setMaxScore(getScoreFromLocalStorage())
 
     setIsCollision(false)
   }
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (checkBodyCollision(snakeBody, updatePosition(direction, headPosition))) setIsCollision(true)
+      if (checkBodyCollision(snakeBody, updatePosition(direction, headPosition))) {
+        setIsCollision(true)
+        if (score > maxScore) localStorage.setItem(LOCALSTORE_MAX_SCORE, String(score))
+      }
+
       if (!isCollision) {
         setHeadPosition(updatePosition(direction, headPosition))
         setSnakeBody(updateBody(snakeBody, headPosition, snakeSize))
@@ -69,11 +76,11 @@ export function App() {
     window.addEventListener("keypress", (e) => wasdListener(e, directionRef, setDirectionRef))
 
     return () => clearInterval(interval)
-  }, [direction, isCollision, fruitPosition, headPosition, snakeBody, snakeSize, speed])
+  }, [direction, isCollision, fruitPosition, headPosition, snakeBody, snakeSize, speed, score, maxScore])
 
   return (
     <Container>
-      <Menu score={score} isCollision={isCollision} restart={() => restart()} />
+      <Menu score={score} maxScore={maxScore} isCollision={isCollision} restart={() => restart()} />
 
       <Playfield
         ref={playfieldRef}
