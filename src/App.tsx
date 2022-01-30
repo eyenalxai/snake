@@ -1,15 +1,22 @@
 import { useEffect, useRef, useState } from "react"
 import { isEqual } from "lodash"
 import { Direction, Position } from "./type"
-import { decreaseSpeed, getScoreFromLocalStorage } from "./util/other"
+import { decreaseTickrate, getScoreFromLocalStorage } from "./util/other"
 import { Playfield } from "./component/playfield/Playfield"
 import { Controls } from "./component/controls/Controls"
 import { Container } from "./component/Container"
-import { GITHUB_URL, LOCALSTORE_MAX_SCORE, STARTING_HEAD_POSITION, STARTING_SNAKE_SIZE, STARTING_SPEED } from "./config"
+import {
+  GITHUB_URL,
+  LOCALSTORAGE_MAX_SCORE_KEY,
+  STARTING_HEAD_POSITION,
+  STARTING_SNAKE_SIZE,
+  STARTING_TICKRATE
+} from "./config"
 import { Menu } from "./component/menu/Menu"
 import { wasdListener } from "./util/keypress"
 import { generateFruitPosition, updatePosition } from "./util/position"
 import { checkBodyCollision, updateBody } from "./util/body"
+import { scoreAddition } from "./util/score"
 
 export function App() {
   const [sourceUrlShown, setSourceUrlShown] = useState(false)
@@ -19,6 +26,7 @@ export function App() {
   const [headPosition, setHeadPosition] = useState<Position>(STARTING_HEAD_POSITION)
   const [snakeBody, setSnakeBody] = useState<Position[]>([STARTING_HEAD_POSITION])
   const [fruitPosition, setFruitPosition] = useState(generateFruitPosition([STARTING_HEAD_POSITION]))
+  const [headPositionWhenFruitSpawned, setHeadPositionWhenFruitSpawned] = useState<Position>(STARTING_HEAD_POSITION)
 
   const [direction, setDirection] = useState<Direction>("up")
 
@@ -28,7 +36,7 @@ export function App() {
     setDirection(dir)
   }
 
-  const [speed, setSpeed] = useState(STARTING_SPEED)
+  const [tickRate, setTickRate] = useState(STARTING_TICKRATE)
   const [snakeSize, setSnakeSize] = useState(STARTING_SNAKE_SIZE)
 
   const [score, setScore] = useState<number>(0)
@@ -42,7 +50,7 @@ export function App() {
     setSnakeBody([STARTING_HEAD_POSITION])
     setDirectionRef("up")
 
-    setSpeed(STARTING_SPEED)
+    setTickRate(STARTING_TICKRATE)
     setSnakeSize(STARTING_SNAKE_SIZE)
 
     setScore(0)
@@ -61,7 +69,7 @@ export function App() {
     const interval = setInterval(() => {
       if (checkBodyCollision(snakeBody, updatePosition(direction, headPosition))) {
         setIsCollision(true)
-        if (score > maxScore) localStorage.setItem(LOCALSTORE_MAX_SCORE, String(score))
+        if (score > maxScore) localStorage.setItem(LOCALSTORAGE_MAX_SCORE_KEY, String(score))
       }
 
       if (!isCollision) {
@@ -70,18 +78,28 @@ export function App() {
 
         if (isEqual(headPosition, fruitPosition)) {
           setSnakeSize((sz) => sz + 1)
-          setScore((sc) => sc + snakeSize + 1)
+          setScore((sc) => sc + scoreAddition(headPositionWhenFruitSpawned, fruitPosition, snakeSize, tickRate))
+          setHeadPositionWhenFruitSpawned(headPosition)
           setFruitPosition(generateFruitPosition(snakeBody))
-          setSpeed((sp) => decreaseSpeed(sp))
+          setTickRate((sp) => decreaseTickrate(sp))
         }
       }
-    }, speed)
+    }, tickRate)
 
     window.addEventListener("keypress", (e) => wasdListener(e, directionRef, setDirectionRef))
 
     return () => clearInterval(interval)
   }, [
-    direction, isCollision, fruitPosition, headPosition, snakeBody, snakeSize, speed, score, maxScore, sourceUrlShown
+    direction,
+    isCollision,
+    fruitPosition,
+    headPosition,
+    snakeBody,
+    snakeSize,
+    tickRate,
+    score, maxScore,
+    sourceUrlShown,
+    headPositionWhenFruitSpawned
   ])
 
   return (

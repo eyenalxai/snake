@@ -1,8 +1,9 @@
-import { LOCALSTORE_MAX_SCORE, MIN_SPEED, SPEED_STEP } from "../config"
+import { LOCALSTORAGE_MAX_SCORE_KEY, MIN_TICKRATE, TICKRATE_MULTIPLIER } from "../config"
 import { Direction } from "../type"
 
-export function decreaseSpeed(speed: number): number {
-  return speed <= MIN_SPEED ? speed : speed - SPEED_STEP
+export function decreaseTickrate(speed: number): number {
+  const futureTickRate = Number((speed * TICKRATE_MULTIPLIER).toFixed(0))
+  return futureTickRate >= MIN_TICKRATE ? futureTickRate : MIN_TICKRATE
 }
 
 export function isDirectionConflict(direction: Direction, currentDirection: Direction): boolean {
@@ -31,7 +32,7 @@ export function isDirectionConflict(direction: Direction, currentDirection: Dire
 }
 
 export function getScoreFromLocalStorage(): number {
-  const score = localStorage.getItem(LOCALSTORE_MAX_SCORE)
+  const score = localStorage.getItem(LOCALSTORAGE_MAX_SCORE_KEY)
   if (score) return Number(score)
   return 0
 }
