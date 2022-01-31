@@ -12,3 +12,5 @@ export const TICKRATE_MULTIPLIER = 0.97
 export const LOCALSTORAGE_MAX_SCORE_KEY = "max-score"
 
 export const GITHUB_URL = "https://github.com/tionsverryful/snake"
+
+export const STARTING_DIRECTION: Direction = "up"

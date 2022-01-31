@@ -2,9 +2,10 @@ import { atom, RecoilState, SetterOrUpdater, useRecoilState } from "recoil"
 import { MutableRefObject, useRef } from "react"
 import { last } from "lodash"
 import { Direction, Position } from "../type"
-import { STARTING_BODY_POSITION, STARTING_SNAKE_SIZE, STARTING_TICKRATE } from "../config"
+import { STARTING_BODY_POSITION, STARTING_DIRECTION, STARTING_SNAKE_SIZE, STARTING_TICKRATE } from "../config"
 import { generateFruitPosition } from "../util/position"
 import { getScoreFromLocalStorage } from "../util/score"
+import { getOppositeDirection } from "../App"
 
 export function useRecoilStateRef<T>(recoilState: RecoilState<T>): [MutableRefObject<T>, SetterOrUpdater<T>] {
   const [state, setState] = useRecoilState(recoilState)
@@ -32,7 +33,12 @@ export const headPosState: RecoilState<Position> = atom({
 
 export const directionState: RecoilState<Direction> = atom({
   key: "directionState",
-  default: "up"
+  default: STARTING_DIRECTION
+})
+
+export const blockedDirectionState: RecoilState<Direction> = atom({
+  key: "blockedDirectionState",
+  default: getOppositeDirection(STARTING_DIRECTION)
 })
 
 export const collisionState: RecoilState<boolean> = atom({

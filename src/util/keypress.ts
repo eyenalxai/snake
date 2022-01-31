@@ -23,24 +23,33 @@ export interface wasdListenerProps {
   direction: Direction
   // eslint-disable-next-line no-unused-vars
   setDirection: (dir: Direction) => void
+  blockedDirection: Direction
 }
 
-export function wasdListener({ e, direction, setDirection }: wasdListenerProps) {
+export function wasdListener({ e, direction, setDirection, blockedDirection }: wasdListenerProps) {
   const { code } = e
 
   if (isValidKeypress(code, direction)) {
     switch (code) {
       case "KeyW":
-        setDirection("up")
+        if (blockedDirection !== "up") {
+          setDirection("up")
+        }
         break
       case "KeyA":
-        setDirection("left")
+        if (blockedDirection !== "left") {
+          setDirection("left")
+        }
         break
       case "KeyS":
-        setDirection("down")
+        if (blockedDirection !== "down") {
+          setDirection("down")
+        }
         break
       case "KeyD":
-        setDirection("right")
+        if (blockedDirection !== "right") {
+          setDirection("right")
+        }
         break
       default:
         break

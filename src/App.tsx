@@ -4,6 +4,7 @@ import { useRecoilState } from "recoil"
 import { Container } from "./component/Container"
 import { Playfield } from "./component/playfield/Playfield"
 import {
+  blockedDirectionState,
   collisionState,
   directionState,
   fruitPositionState,
@@ -32,9 +33,25 @@ import { scoreAddition } from "./util/score"
 import { generateFruitPosition } from "./util/position"
 import { decreaseTickrate } from "./util/other"
 
+// eslint-disable-next-line consistent-return
+export function getOppositeDirection(direction: Direction): Direction {
+  // eslint-disable-next-line default-case
+  switch (direction) {
+    case "up":
+      return "down"
+    case "left":
+      return "right"
+    case "right":
+      return "left"
+    case "down":
+      return "up"
+  }
+}
+
 export function App() {
   const [sourceUrlShown, setSourceUrlShown] = useState(false)
   const [direction, setDirection] = useRecoilStateRef<Direction>(directionState)
+  const [blockedDirection, setBlockedDirection] = useRecoilStateRef<Direction>(blockedDirectionState)
   const [snakeBody, setSnakeBody] = useRecoilStateRef<Position[]>(snakeBodyState)
   const [headPos, setHeadPos] = useRecoilStateRef<Position>(headPosState)
   const [fruitPosition, setFruitPosition] = useRecoilStateRef<Position>(fruitPositionState)
@@ -67,7 +84,7 @@ export function App() {
       console.log("Source code:", GITHUB_URL)
       setSourceUrlShown(true)
     }
-    
+
     const interval = setInterval(() => {
       const updatedBody = updateBody(snakeBody.current, direction.current, snakeSize.current)
       if (checkCollision(updatedBody)) {
@@ -88,6 +105,7 @@ export function App() {
           setFruitPosition(generateFruitPosition(snakeBody.current))
           setTickrate(decreaseTickrate(tickrate))
         }
+        setBlockedDirection(getOppositeDirection(direction.current))
       }
     }, tickrate)
 
@@ -95,11 +113,14 @@ export function App() {
       wasdListener({
         e,
         direction: direction.current,
-        setDirection
+        setDirection,
+        blockedDirection: blockedDirection.current
       })
     )
 
-    return () => clearInterval(interval)
+    return () => {
+      clearInterval(interval)
+    }
     // I'm usingRefs
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tickrate, isCollision])
