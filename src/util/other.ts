@@ -30,3 +30,18 @@ export function isDirectionConflict(direction: Direction, currentDirection: Dire
 
   return false
 }
+
+// eslint-disable-next-line consistent-return
+export function mapDirectionToWASD(direction: Direction) {
+  // eslint-disable-next-line default-case
+  switch (direction) {
+    case "up":
+      return "W"
+    case "left":
+      return "A"
+    case "down":
+      return "S"
+    case "right":
+      return "D"
+  }
+}

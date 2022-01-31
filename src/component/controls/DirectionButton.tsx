@@ -1,14 +1,15 @@
+import { useRecoilState } from "recoil"
 import { Direction } from "../../type"
-import { isDirectionConflict } from "../../util/other"
-import { directionState, useRecoilStateRef } from "../../recoil/atoms"
+import { isDirectionConflict, mapDirectionToWASD } from "../../util/other"
+import { directionState } from "../../recoil/atoms"
 
 interface DirectionButtonProps {
   buttonDirection: Direction
 }
 
 export function DirectionButton({ buttonDirection }: DirectionButtonProps) {
-  const [direction, setDirection] = useRecoilStateRef<Direction>(directionState)
-  const disabled = isDirectionConflict(buttonDirection, direction.current)
+  const [direction, setDirection] = useRecoilState<Direction>(directionState)
+  const disabled = isDirectionConflict(buttonDirection, direction)
 
   return (
     <button
@@ -22,7 +23,7 @@ export function DirectionButton({ buttonDirection }: DirectionButtonProps) {
         ${buttonDirection === "up" ? "col-span-3" : "col-span-1"}
       `}
     >
-      { buttonDirection.toUpperCase() }
+      {mapDirectionToWASD(buttonDirection)}
     </button>
   )
 }
