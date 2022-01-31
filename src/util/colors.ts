@@ -23,6 +23,6 @@ export function getCellColors(isFruit: boolean, isSnakeBody: boolean, isHead: bo
     border-${direction}-4 dark:border-${direction}-4`
   }
   if (isSnakeBody) return "bg-gray-400 dark:bg-gray-500"
-  if (isFruit) return "bg-green-300 dark:bg-green-300"
+  if (isFruit) return "bg-green-400 dark:bg-green-300"
   return "bg-gray-200 dark:bg-gray-700"
 }
