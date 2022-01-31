@@ -129,7 +129,7 @@ export function App() {
     <Container>
       <Menu restart={() => restart()} />
       <Playfield ref={playfieldRef} />
-      <Controls />
+      <Controls directionRef={direction} />
     </Container>
   )
 }

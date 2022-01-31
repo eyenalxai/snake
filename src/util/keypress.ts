@@ -1,5 +1,5 @@
 import { Direction } from "../type"
-import { isDirectionConflict } from "./other"
+import { isDirectionConflict, switchDirection } from "./direction"
 
 function isValidKeypress(key: string, currentDirection: Direction): boolean {
   if (!["KeyW", "KeyA", "KeyS", "KeyD"].includes(key)) return false
@@ -32,24 +32,16 @@ export function wasdListener({ e, direction, setDirection, blockedDirection }: w
   if (isValidKeypress(code, direction)) {
     switch (code) {
       case "KeyW":
-        if (blockedDirection !== "up") {
-          setDirection("up")
-        }
+        switchDirection(blockedDirection, setDirection)
         break
       case "KeyA":
-        if (blockedDirection !== "left") {
-          setDirection("left")
-        }
+        switchDirection(blockedDirection, setDirection)
         break
       case "KeyS":
-        if (blockedDirection !== "down") {
-          setDirection("down")
-        }
+        switchDirection(blockedDirection, setDirection)
         break
       case "KeyD":
-        if (blockedDirection !== "right") {
-          setDirection("right")
-        }
+        switchDirection(blockedDirection, setDirection)
         break
       default:
         break

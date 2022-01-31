@@ -5,7 +5,7 @@ import { DIMENSIONS } from "../../config"
 import { Cell } from "./Cell"
 import { fruitPositionState, headPosState, snakeBodyState } from "../../recoil/atoms"
 
-type Props = {}
+export type Props = {}
 
 export const Playfield = forwardRef<HTMLDivElement, Props>((props, ref) => {
   const fruitPosition = useRecoilValue(fruitPositionState)
@@ -14,18 +14,20 @@ export const Playfield = forwardRef<HTMLDivElement, Props>((props, ref) => {
 
   return (
     <div ref={ref} className={`inline-grid grid-cols-${DIMENSIONS}`}>
-      { range(DIMENSIONS).map((idy) => range(DIMENSIONS).map((idx) => {
-        const [x, y] = [idx, DIMENSIONS - idy - 1]
+      {range(DIMENSIONS).map((idy) =>
+        range(DIMENSIONS).map((idx) => {
+          const [x, y] = [idx, DIMENSIONS - idy - 1]
 
-        return (
-          <Cell
-            key={`x-${x} y-${y}`}
-            isFruit={isEqual([x, y], fruitPosition)}
-            isSnakeBody={snakeBody.some((kek) => isEqual(kek, [x, y]))}
-            isHead={isEqual([x, y], headPos)}
-          />
-        )
-      })) }
+          return (
+            <Cell
+              key={`x-${x} y-${y}`}
+              isFruit={isEqual([x, y], fruitPosition)}
+              isSnakeBody={snakeBody.some((kek) => isEqual(kek, [x, y]))}
+              isHead={isEqual([x, y], headPos)}
+            />
+          )
+        })
+      )}
     </div>
   )
 })
