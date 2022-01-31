@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { isEqual } from "lodash"
 import { Direction, Position } from "./type"
-import { decreaseTickrate, getScoreFromLocalStorage } from "./util/other"
+import { decreaseTickrate } from "./util/other"
 import { Playfield } from "./component/playfield/Playfield"
 import { Controls } from "./component/controls/Controls"
 import { Container } from "./component/Container"
@@ -16,7 +16,7 @@ import { Menu } from "./component/menu/Menu"
 import { wasdListener } from "./util/keypress"
 import { generateFruitPosition, updatePosition } from "./util/position"
 import { checkBodyCollision, updateBody } from "./util/body"
-import { scoreAddition } from "./util/score"
+import { getScoreFromLocalStorage, scoreAddition } from "./util/score"
 
 export function App() {
   const [sourceUrlShown, setSourceUrlShown] = useState(false)
