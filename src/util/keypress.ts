@@ -32,16 +32,16 @@ export function wasdListener({ e, direction, setDirection, blockedDirection }: w
   if (isValidKeypress(code, direction)) {
     switch (code) {
       case "KeyW":
-        switchDirection(blockedDirection, setDirection)
+        switchDirection(blockedDirection, setDirection, "up")
         break
       case "KeyA":
-        switchDirection(blockedDirection, setDirection)
+        switchDirection(blockedDirection, setDirection, "left")
         break
       case "KeyS":
-        switchDirection(blockedDirection, setDirection)
+        switchDirection(blockedDirection, setDirection, "down")
         break
       case "KeyD":
-        switchDirection(blockedDirection, setDirection)
+        switchDirection(blockedDirection, setDirection, "right")
         break
       default:
         break

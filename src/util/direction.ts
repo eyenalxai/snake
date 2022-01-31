@@ -1,10 +1,14 @@
 // eslint-disable-next-line no-unused-vars
 import { Direction } from "../type"
 
-// eslint-disable-next-line no-unused-vars
-export function switchDirection(blockedDirection: Direction, setDirection: (dir: Direction) => void) {
-  if (blockedDirection !== "up") {
-    setDirection("up")
+export function switchDirection(
+  blockedDirection: Direction,
+  // eslint-disable-next-line no-unused-vars
+  setDirection: (dir: Direction) => void,
+  direction: Direction
+) {
+  if (blockedDirection !== direction) {
+    setDirection(direction)
   }
 }
 
