@@ -1,26 +1,20 @@
 import { isEqual, range } from "lodash"
-import { forwardRef, PropsWithChildren } from "react"
+import { forwardRef } from "react"
+import { useRecoilValue } from "recoil"
 import { DIMENSIONS } from "../../config"
 import { Cell } from "./Cell"
-import { Direction, Position } from "../../type"
+import { fruitPositionState, headPosState, snakeBodyState } from "../../recoil/atoms"
 
-interface PlayfieldProps {
-  snakeBody: Position[]
-  fruitPosition: Position
-  headPosition: Position
-  currentDirection: Direction
-}
+type Props = {}
 
-export const Playfield = forwardRef<HTMLDivElement, PropsWithChildren<PlayfieldProps>>(({
-  snakeBody,
-  fruitPosition,
-  headPosition,
-  currentDirection
+export const Playfield = forwardRef<HTMLDivElement, Props>((props, ref) => {
+  const fruitPosition = useRecoilValue(fruitPositionState)
+  const snakeBody = useRecoilValue(snakeBodyState)
+  const headPos = useRecoilValue(headPosState)
 
-}: PlayfieldProps, ref) => (
-  <div ref={ref} className={`inline-grid grid-cols-${DIMENSIONS}`}>
-    {
-      range(DIMENSIONS).map((idy) => range(DIMENSIONS).map((idx) => {
+  return (
+    <div ref={ref} className={`inline-grid grid-cols-${DIMENSIONS}`}>
+      { range(DIMENSIONS).map((idy) => range(DIMENSIONS).map((idx) => {
         const [x, y] = [idx, DIMENSIONS - idy - 1]
 
         return (
@@ -28,11 +22,10 @@ export const Playfield = forwardRef<HTMLDivElement, PropsWithChildren<PlayfieldP
             key={`x-${x} y-${y}`}
             isFruit={isEqual([x, y], fruitPosition)}
             isSnakeBody={snakeBody.some((kek) => isEqual(kek, [x, y]))}
-            isHead={isEqual([x, y], headPosition)}
-            currentDirection={currentDirection}
+            isHead={isEqual([x, y], headPos)}
           />
         )
-      }))
-    }
-  </div>
-))
+      })) }
+    </div>
+  )
+})

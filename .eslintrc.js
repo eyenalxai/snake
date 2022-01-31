@@ -7,7 +7,8 @@ module.exports = {
     "plugin:react/recommended",
     "plugin:react-hooks/recommended",
     "plugin:react/jsx-runtime",
-    "airbnb"
+    "airbnb",
+    "prettier"
   ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
@@ -27,11 +28,7 @@ module.exports = {
     "react/react-in-jsx-scope": "off",
     "react/jsx-no-useless-fragment": ["error", { allowExpressions: true }],
     "react/require-default-props": "off",
-    "comma-dangle": ["error", "never"],
-    "no-restricted-imports": [
-      "error",
-      { patterns: ["@mui/*/*/*", "!@mui/material/test-utils/*"] }
-    ]
+    "comma-dangle": ["error", "never"]
   },
   settings: {
     "import/resolver": {

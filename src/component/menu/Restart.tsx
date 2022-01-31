@@ -1,9 +1,13 @@
+import { useRecoilValue } from "recoil"
+import { collisionState } from "../../recoil/atoms"
+
 interface RestartProps {
-  isCollision: boolean
   restart: () => void
 }
 
-export function Restart({ isCollision, restart }: RestartProps) {
+export function Restart({ restart }: RestartProps) {
+  const isCollision = useRecoilValue<boolean>(collisionState)
+
   if (!isCollision) return null
 
   return (

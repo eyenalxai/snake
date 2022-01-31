@@ -1,12 +1,20 @@
-import { isEqual } from "lodash"
-import { Position } from "../type"
+import _, { isEqual } from "lodash"
+import { Direction, Position } from "../type"
+import { updatePosition } from "./position"
 
-export function updateBody(snakeBody: Position[], headPosition: Position, size: number): Position[] {
-  snakeBody.push(headPosition)
+export function updateBody(snakeBody: Position[], direction: Direction, size: number): Position[] {
+  snakeBody.push(updatePosition(direction, _.last(snakeBody)!))
   return snakeBody.slice(-size)
 }
 
-export function checkBodyCollision(snakeBody: Position[], headPosition: Position): boolean {
-  if (snakeBody.length >= 1) return snakeBody.filter((pos) => isEqual(pos, headPosition)).length > 0
-  return false
+export function checkCollision(snakeBody: Position[]) {
+  return snakeBody.some((pos1) => {
+    let count = 0
+    snakeBody.forEach((pos2) => {
+      if (isEqual(pos1, pos2)) {
+        count += 1
+      }
+    })
+    return count >= 2
+  })
 }

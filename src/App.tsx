@@ -1,69 +1,64 @@
 import { useEffect, useRef, useState } from "react"
-import { isEqual } from "lodash"
-import { Direction, Position } from "./type"
-import { decreaseTickrate } from "./util/other"
-import { Playfield } from "./component/playfield/Playfield"
-import { Controls } from "./component/controls/Controls"
+import { isEqual, last } from "lodash"
+import { useRecoilState } from "recoil"
 import { Container } from "./component/Container"
+import { Playfield } from "./component/playfield/Playfield"
+import {
+  collisionState,
+  directionState,
+  fruitPositionState,
+  headPosState,
+  maxScoreState,
+  prevHeadPosState,
+  scoreState,
+  snakeBodyState,
+  snakeSizeState,
+  tickrateState,
+  useRecoilStateRef
+} from "./recoil/atoms"
+import { checkCollision, updateBody } from "./util/body"
+import { wasdListener } from "./util/keypress"
+import { Direction, Position } from "./type"
+import { Controls } from "./component/controls/Controls"
+import { Menu } from "./component/menu/Menu"
 import {
   GITHUB_URL,
   LOCALSTORAGE_MAX_SCORE_KEY,
-  STARTING_HEAD_POSITION,
+  STARTING_BODY_POSITION,
   STARTING_SNAKE_SIZE,
   STARTING_TICKRATE
 } from "./config"
-import { Menu } from "./component/menu/Menu"
-import { wasdListener } from "./util/keypress"
-import { generateFruitPosition, updatePosition } from "./util/position"
-import { checkBodyCollision, updateBody } from "./util/body"
-import { getScoreFromLocalStorage, scoreAddition } from "./util/score"
+import { scoreAddition } from "./util/score"
+import { generateFruitPosition } from "./util/position"
+import { decreaseTickrate } from "./util/other"
 
 export function App() {
   const [sourceUrlShown, setSourceUrlShown] = useState(false)
+  const [direction, setDirection] = useRecoilStateRef<Direction>(directionState)
+  const [snakeBody, setSnakeBody] = useRecoilStateRef<Position[]>(snakeBodyState)
+  const [headPos, setHeadPos] = useRecoilStateRef<Position>(headPosState)
+  const [fruitPosition, setFruitPosition] = useRecoilStateRef<Position>(fruitPositionState)
+  const [snakeSize, setSnakeSize] = useRecoilStateRef<number>(snakeSizeState)
 
-  const [isCollision, setIsCollision] = useState(false)
+  const [prevHeadPos, setPrevHeadPos] = useRecoilState(prevHeadPosState)
 
-  const [headWasTurnedThisMove, setHeadWasTurnedThisMove] = useState(false)
-  const [headPosition, setHeadPosition] = useState<Position>(STARTING_HEAD_POSITION)
-  const [snakeBody, setSnakeBody] = useState<Position[]>([STARTING_HEAD_POSITION])
-  const [fruitPosition, setFruitPosition] = useState(generateFruitPosition([STARTING_HEAD_POSITION]))
-  const [headPositionWhenFruitSpawned, setHeadPositionWhenFruitSpawned] = useState<Position>(STARTING_HEAD_POSITION)
-
-  const [direction, setDirection] = useState<Direction>("up")
-
-  const directionRef = useRef(direction)
-  const setDirectionRef = (dir: Direction) => {
-    directionRef.current = dir
-    setDirection(dir)
-  }
-
-  const headWasTurnedThisMoveRef = useRef(headWasTurnedThisMove)
-  const setHeadWasTurnedThisMoveRef = (wasTurned: boolean) => {
-    headWasTurnedThisMoveRef.current = wasTurned
-    setHeadWasTurnedThisMove(wasTurned)
-  }
-
-  const [tickRate, setTickRate] = useState(STARTING_TICKRATE)
-  const [snakeSize, setSnakeSize] = useState(STARTING_SNAKE_SIZE)
-
-  const [score, setScore] = useState<number>(0)
-  const [maxScore, setMaxScore] = useState<number>(getScoreFromLocalStorage())
+  const [tickrate, setTickrate] = useRecoilState<number>(tickrateState)
+  const [score, setScore] = useRecoilState<number>(scoreState)
+  const [maxScore, setMaxScore] = useRecoilState<number>(maxScoreState)
+  const [isCollision, setIsCollision] = useRecoilState<boolean>(collisionState)
 
   const playfieldRef = useRef<HTMLDivElement>(null)
 
   function restart() {
     if (playfieldRef.current) playfieldRef.current.focus()
-    setHeadPosition(STARTING_HEAD_POSITION)
-    setSnakeBody([STARTING_HEAD_POSITION])
-    setDirectionRef("up")
 
-    setTickRate(STARTING_TICKRATE)
     setSnakeSize(STARTING_SNAKE_SIZE)
+    setSnakeBody(STARTING_BODY_POSITION)
+    setDirection("up")
 
-    setScore(0)
-    setMaxScore(getScoreFromLocalStorage())
-
+    setTickrate(STARTING_TICKRATE)
     setIsCollision(false)
+    setScore(0)
   }
 
   useEffect(() => {
@@ -72,64 +67,48 @@ export function App() {
       console.log("Source code:", GITHUB_URL)
       setSourceUrlShown(true)
     }
-
+    
     const interval = setInterval(() => {
-      if (checkBodyCollision(snakeBody, updatePosition(direction, headPosition))) {
+      const updatedBody = updateBody(snakeBody.current, direction.current, snakeSize.current)
+      if (checkCollision(updatedBody)) {
         setIsCollision(true)
-        if (score > maxScore) localStorage.setItem(LOCALSTORAGE_MAX_SCORE_KEY, String(score))
+        if (score > maxScore) {
+          setMaxScore(score)
+          localStorage.setItem(LOCALSTORAGE_MAX_SCORE_KEY, String(score))
+        }
       }
 
       if (!isCollision) {
-        setHeadPosition(updatePosition(direction, headPosition))
-        setSnakeBody(updateBody(snakeBody, headPosition, snakeSize))
-
-        if (isEqual(headPosition, fruitPosition)) {
-          setSnakeSize((sz) => sz + 1)
-          setScore((sc) => sc + scoreAddition(headPositionWhenFruitSpawned, fruitPosition, snakeSize, tickRate))
-          setHeadPositionWhenFruitSpawned(headPosition)
-          setFruitPosition(generateFruitPosition(snakeBody))
-          setTickRate((sp) => decreaseTickrate(sp))
+        setSnakeBody(updatedBody)
+        setHeadPos(last(snakeBody.current)!)
+        if (isEqual(headPos.current, fruitPosition.current)) {
+          setScore(score + scoreAddition(prevHeadPos, fruitPosition.current, snakeSize.current, tickrate))
+          setSnakeSize(snakeSize.current + 1)
+          setPrevHeadPos(headPos.current)
+          setFruitPosition(generateFruitPosition(snakeBody.current))
+          setTickrate(decreaseTickrate(tickrate))
         }
-        setHeadWasTurnedThisMoveRef(false)
       }
-    }, tickRate)
+    }, tickrate)
 
-    window.addEventListener("keypress", (e) => wasdListener({
-      e,
-      directionRef,
-      setDirectionRef,
-      headWasTurnedThisMoveRef,
-      setHeadWasTurnedThisMoveRef
-    }))
+    window.addEventListener("keypress", (e) =>
+      wasdListener({
+        e,
+        direction: direction.current,
+        setDirection
+      })
+    )
 
     return () => clearInterval(interval)
-  }, [
-    direction,
-    fruitPosition,
-    headPosition,
-    headPositionWhenFruitSpawned,
-    headWasTurnedThisMove,
-    isCollision,
-    maxScore,
-    score,
-    snakeBody,
-    snakeSize,
-    sourceUrlShown,
-    tickRate
-  ])
+    // I'm usingRefs
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tickrate, isCollision])
 
   return (
     <Container>
-      <Menu score={score} maxScore={maxScore} isCollision={isCollision} restart={() => restart()} />
-
-      <Playfield
-        ref={playfieldRef}
-        fruitPosition={fruitPosition}
-        snakeBody={snakeBody}
-        headPosition={headPosition}
-        currentDirection={direction}
-      />
-      <Controls currentDirection={direction} onClick={setDirection} />
+      <Menu restart={() => restart()} />
+      <Playfield ref={playfieldRef} />
+      <Controls />
     </Container>
   )
 }

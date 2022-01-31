@@ -18,7 +18,9 @@ export function getBorderSide(direction: Direction): string {
 export function getCellColors(isFruit: boolean, isSnakeBody: boolean, isHead: boolean, direction: string): string {
   if (isHead) {
     return `bg-gray-500 dark:bg-gray-400
-    border-${direction}-gray-900  dark:border-${direction}-amber-500 border-${direction}-4 dark:border-${direction}-4`
+    border-${direction}-gray-900  
+    dark:border-${direction}-amber-500 
+    border-${direction}-4 dark:border-${direction}-4`
   }
   if (isSnakeBody) return "bg-gray-400 dark:bg-gray-500"
   if (isFruit) return "bg-green-300 dark:bg-green-300"

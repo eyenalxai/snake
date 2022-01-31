@@ -1,4 +1,3 @@
-import { MutableRefObject } from "react"
 import { Direction } from "../type"
 import { isDirectionConflict } from "./other"
 
@@ -21,40 +20,27 @@ function isValidKeypress(key: string, currentDirection: Direction): boolean {
 
 export interface wasdListenerProps {
   e: KeyboardEvent
-  directionRef: MutableRefObject<Direction>
+  direction: Direction
   // eslint-disable-next-line no-unused-vars
-  setDirectionRef: (dir: Direction) => void
-  headWasTurnedThisMoveRef: MutableRefObject<boolean>
-  // eslint-disable-next-line no-unused-vars
-  setHeadWasTurnedThisMoveRef: (kek: boolean) => void
+  setDirection: (dir: Direction) => void
 }
 
-export function wasdListener({
-  e,
-  directionRef,
-  setDirectionRef,
-  headWasTurnedThisMoveRef,
-  setHeadWasTurnedThisMoveRef
-}: wasdListenerProps) {
+export function wasdListener({ e, direction, setDirection }: wasdListenerProps) {
   const { code } = e
 
-  if (!headWasTurnedThisMoveRef.current && isValidKeypress(code, directionRef.current)) {
+  if (isValidKeypress(code, direction)) {
     switch (code) {
       case "KeyW":
-        setDirectionRef("up")
-        setHeadWasTurnedThisMoveRef(true)
+        setDirection("up")
         break
       case "KeyA":
-        setDirectionRef("left")
-        setHeadWasTurnedThisMoveRef(true)
+        setDirection("left")
         break
       case "KeyS":
-        setDirectionRef("down")
-        setHeadWasTurnedThisMoveRef(true)
+        setDirection("down")
         break
       case "KeyD":
-        setDirectionRef("right")
-        setHeadWasTurnedThisMoveRef(true)
+        setDirection("right")
         break
       default:
         break
