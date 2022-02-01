@@ -87,13 +87,13 @@ export function App() {
   useEffect(() => {
     const interval = setInterval(() => {
       const updatedBody = updateBody(snakeBody.current, direction.current, snakeSize.current)
-      if (checkCollision(updatedBody)) setIsCollision(false)
+      if (checkCollision(updatedBody)) setIsCollision(true)
 
       if (!isCollision) {
         setSnakeBody(updatedBody)
         setHeadPos(last(snakeBody.current)!)
         if (isEqual(headPos.current, fruitPosition.current)) {
-          setSnakeSize(snakeSize.current + 3)
+          setSnakeSize(snakeSize.current + 1)
           setPrevHeadPos(headPos.current)
           setFruitPosition(generateFruitPosition(snakeBody.current))
           setTickrate(decreaseTickrate(tickrate))
