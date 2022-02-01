@@ -4,8 +4,8 @@ export const DIMENSIONS = 13
 export const DIRECTIONS: Direction[] = ["up", "left", "down", "right"]
 
 export const STARTING_BODY_POSITION: Position[] = [[6, 6]]
-export const STARTING_SNAKE_SIZE = 20
-export const STARTING_TICKRATE = 200
+export const STARTING_SNAKE_SIZE = 2
+export const STARTING_TICKRATE = 500
 export const MIN_TICKRATE = 50
 export const TICKRATE_MULTIPLIER = 0.97
 
