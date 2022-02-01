@@ -18,19 +18,41 @@ function isValidKeypress(key: string, currentDirection: Direction): boolean {
   }
 }
 
-export interface wasdListenerProps {
+export interface EscapeListenerProps {
+  e: KeyboardEvent
+  // eslint-disable-next-line no-unused-vars
+  setIsPaused: (state: boolean) => void
+  isCollision: boolean
+  isPaused: boolean
+}
+
+export function escapeListener({ e, setIsPaused, isCollision, isPaused }: EscapeListenerProps) {
+  if (e.code === "Escape" && !isCollision) {
+    setIsPaused(!isPaused)
+  }
+}
+
+export interface WasdListenerProps {
   e: KeyboardEvent
   direction: Direction
   // eslint-disable-next-line no-unused-vars
   setDirection: (dir: Direction) => void
   blockedDirection: Direction
   isCollision: boolean
+  isPaused: boolean
 }
 
-export function wasdListener({ e, direction, setDirection, blockedDirection, isCollision }: wasdListenerProps) {
+export function wasdListener({
+  e,
+  direction,
+  setDirection,
+  blockedDirection,
+  isCollision,
+  isPaused
+}: WasdListenerProps) {
   const { code } = e
 
-  if (isValidKeypress(code, direction) && !isCollision) {
+  if (isValidKeypress(code, direction) && !isCollision && !isPaused) {
     switch (code) {
       case "KeyW":
         switchDirection(blockedDirection, setDirection, "up")

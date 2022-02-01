@@ -4,8 +4,8 @@ import { last } from "lodash"
 import { Direction, Position } from "../type"
 import { STARTING_BODY_POSITION, STARTING_DIRECTION, STARTING_SNAKE_SIZE, STARTING_TICKRATE } from "../config"
 import { generateFruitPosition } from "../util/position"
-import { getScoreFromLocalStorage } from "../util/score"
 import { getOppositeDirection } from "../App"
+import { getScoreFromLocalStorage } from "../util/score"
 
 export function useRecoilStateRef<T>(recoilState: RecoilState<T>): [MutableRefObject<T>, SetterOrUpdater<T>] {
   const [state, setState] = useRecoilState(recoilState)
@@ -74,4 +74,9 @@ export const scoreState: RecoilState<number> = atom({
 export const maxScoreState: RecoilState<number> = atom({
   key: "maxScoreState",
   default: getScoreFromLocalStorage()
+})
+
+export const pausedState: RecoilState<boolean> = atom({
+  key: "pausedState",
+  default: false
 })

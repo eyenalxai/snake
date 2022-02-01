@@ -10,6 +10,7 @@ import {
   fruitPositionState,
   headPosState,
   maxScoreState,
+  pausedState,
   prevHeadPosState,
   scoreState,
   snakeBodyState,
@@ -18,7 +19,7 @@ import {
   useRecoilStateRef
 } from "./recoil/atoms"
 import { checkCollision, updateBody } from "./util/body"
-import { wasdListener } from "./util/keypress"
+import { escapeListener, wasdListener } from "./util/keypress"
 import { Direction, Position } from "./type"
 import { Controls } from "./component/controls/Controls"
 import { Menu } from "./component/menu/Menu"
@@ -51,6 +52,7 @@ export function getOppositeDirection(direction: Direction): Direction {
 }
 
 export function App() {
+  const [isPaused, setIsPaused] = useRecoilStateRef(pausedState)
   const [sourceUrlShown, setSourceUrlShown] = useState(false)
   const [direction, setDirection] = useRecoilStateRef<Direction>(directionState)
   const [blockedDirection, setBlockedDirection] = useRecoilStateRef<Direction>(blockedDirectionState)
@@ -68,7 +70,7 @@ export function App() {
 
   const playfieldRef = useRef<HTMLDivElement>(null)
 
-  function restart() {
+  const restart = () => {
     if (playfieldRef.current) playfieldRef.current.focus()
 
     setDirection(STARTING_DIRECTION)
@@ -84,8 +86,27 @@ export function App() {
     setIsCollision(false)
   }
 
+  const wasdListenerFunction = (e: KeyboardEvent) =>
+    wasdListener({
+      e,
+      direction: direction.current,
+      setDirection,
+      blockedDirection: blockedDirection.current,
+      isCollision: isCollision.current,
+      isPaused: isPaused.current
+    })
+
+  const escapeListenerFunction = (e: KeyboardEvent) =>
+    escapeListener({
+      e,
+      setIsPaused,
+      isCollision: isCollision.current,
+      isPaused: isPaused.current
+    })
+
   useEffect(() => {
     const interval = setInterval(() => {
+      if (isPaused.current) return
       const updatedBody = updateBody(snakeBody.current, direction.current, snakeSize.current)
       if (!isCollision.current && checkCollision(updatedBody)) {
         setIsCollision(true)
@@ -112,16 +133,8 @@ export function App() {
       }
     }, tickrate)
 
-    const wasdListenerFunction = (e: KeyboardEvent) =>
-      wasdListener({
-        e,
-        direction: direction.current,
-        setDirection,
-        blockedDirection: blockedDirection.current,
-        isCollision: isCollision.current
-      })
-
-    window.addEventListener("keypress", (e) => wasdListenerFunction(e), false)
+    window.addEventListener("keypress", wasdListenerFunction, false)
+    window.addEventListener("keyup", escapeListenerFunction, false)
 
     if (!sourceUrlShown) {
       // eslint-disable-next-line no-console
@@ -130,16 +143,23 @@ export function App() {
     }
 
     return () => {
-      window.removeEventListener("keypress", (e) => wasdListenerFunction(e), false)
+      window.removeEventListener("keypress", wasdListenerFunction, false)
+      window.removeEventListener("keyup", escapeListenerFunction, false)
       clearInterval(interval)
     }
     // I'm usingRefs
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tickrate, isCollision.current])
+  }, [tickrate, isCollision.current, isPaused.current])
 
   return (
     <Container>
-      <Menu restart={() => restart()} />
+      <Menu
+        restart={() => restart()}
+        toggleIsPaused={() => {
+          if (playfieldRef.current) playfieldRef.current.focus()
+          setIsPaused(!isPaused.current)
+        }}
+      />
       <Playfield ref={playfieldRef} />
       <Controls directionRef={direction} />
     </Container>
