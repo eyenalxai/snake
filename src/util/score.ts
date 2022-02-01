@@ -10,7 +10,7 @@ function getDistance(a: Position, b: Position): number {
 
 export function scoreAddition(headPosition: Position, fruitPosition: Position, size: number, tickrate: number) {
   return Number(
-    ((getDistance(headPosition, fruitPosition) * size * (STARTING_TICKRATE - tickrate + 1)) / 100 + size).toFixed(0)
+    ((getDistance(headPosition, fruitPosition) * size * (STARTING_TICKRATE - tickrate + 1)) / 10 + size).toFixed(0)
   )
 }
 

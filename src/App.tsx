@@ -85,21 +85,15 @@ export function App() {
   }
 
   useEffect(() => {
-    if (!sourceUrlShown) {
-      // eslint-disable-next-line no-console
-      console.log(CONSOLE_MESSAGE, CONSOLE_MESSAGE_STYLES)
-      setSourceUrlShown(true)
-    }
-
     const interval = setInterval(() => {
       const updatedBody = updateBody(snakeBody.current, direction.current, snakeSize.current)
-      if (checkCollision(updatedBody)) setIsCollision(true)
+      if (checkCollision(updatedBody)) setIsCollision(false)
 
       if (!isCollision) {
         setSnakeBody(updatedBody)
         setHeadPos(last(snakeBody.current)!)
         if (isEqual(headPos.current, fruitPosition.current)) {
-          setSnakeSize(snakeSize.current + 1)
+          setSnakeSize(snakeSize.current + 3)
           setPrevHeadPos(headPos.current)
           setFruitPosition(generateFruitPosition(snakeBody.current))
           setTickrate(decreaseTickrate(tickrate))
@@ -115,16 +109,24 @@ export function App() {
       }
     }, tickrate)
 
-    window.addEventListener("keypress", (e) =>
+    const wasdListenerFunction = (e: KeyboardEvent) =>
       wasdListener({
         e,
         direction: direction.current,
         setDirection,
         blockedDirection: blockedDirection.current
       })
-    )
+
+    window.addEventListener("keypress", (e) => wasdListenerFunction(e), false)
+
+    if (!sourceUrlShown) {
+      // eslint-disable-next-line no-console
+      console.log(CONSOLE_MESSAGE, CONSOLE_MESSAGE_STYLES)
+      setSourceUrlShown(true)
+    }
 
     return () => {
+      window.removeEventListener("keypress", (e) => wasdListenerFunction(e), false)
       clearInterval(interval)
     }
     // I'm usingRefs
