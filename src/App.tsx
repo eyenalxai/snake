@@ -26,6 +26,7 @@ import {
   GITHUB_URL,
   LOCALSTORAGE_MAX_SCORE_KEY,
   STARTING_BODY_POSITION,
+  STARTING_DIRECTION,
   STARTING_SNAKE_SIZE,
   STARTING_TICKRATE
 } from "./config"
@@ -69,13 +70,17 @@ export function App() {
   function restart() {
     if (playfieldRef.current) playfieldRef.current.focus()
 
-    setSnakeSize(STARTING_SNAKE_SIZE)
+    setDirection(STARTING_DIRECTION)
+    setBlockedDirection(getOppositeDirection(STARTING_DIRECTION))
+
     setSnakeBody(STARTING_BODY_POSITION)
-    setDirection("up")
+    setHeadPos(last(STARTING_BODY_POSITION)!)
+    setSnakeSize(STARTING_SNAKE_SIZE)
+    setPrevHeadPos(last(STARTING_BODY_POSITION)!)
 
     setTickrate(STARTING_TICKRATE)
-    setIsCollision(false)
     setScore(0)
+    setIsCollision(false)
   }
 
   useEffect(() => {
@@ -87,23 +92,23 @@ export function App() {
 
     const interval = setInterval(() => {
       const updatedBody = updateBody(snakeBody.current, direction.current, snakeSize.current)
-      if (checkCollision(updatedBody)) {
-        setIsCollision(true)
-        if (score > maxScore) {
-          setMaxScore(score)
-          localStorage.setItem(LOCALSTORAGE_MAX_SCORE_KEY, String(score))
-        }
-      }
+      if (checkCollision(updatedBody)) setIsCollision(true)
 
       if (!isCollision) {
         setSnakeBody(updatedBody)
         setHeadPos(last(snakeBody.current)!)
         if (isEqual(headPos.current, fruitPosition.current)) {
-          setScore(score + scoreAddition(prevHeadPos, fruitPosition.current, snakeSize.current, tickrate))
           setSnakeSize(snakeSize.current + 1)
           setPrevHeadPos(headPos.current)
           setFruitPosition(generateFruitPosition(snakeBody.current))
           setTickrate(decreaseTickrate(tickrate))
+
+          const updatedScore = score + scoreAddition(prevHeadPos, fruitPosition.current, snakeSize.current, tickrate)
+          setScore(updatedScore)
+          if (updatedScore > maxScore) {
+            setMaxScore(updatedScore)
+            localStorage.setItem(LOCALSTORAGE_MAX_SCORE_KEY, String(updatedScore))
+          }
         }
         setBlockedDirection(getOppositeDirection(direction.current))
       }
