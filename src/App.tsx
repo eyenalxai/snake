@@ -64,7 +64,7 @@ export function App() {
   const [tickrate, setTickrate] = useRecoilState<number>(tickrateState)
   const [score, setScore] = useRecoilState<number>(scoreState)
   const [maxScore, setMaxScore] = useRecoilState<number>(maxScoreState)
-  const [isCollision, setIsCollision] = useRecoilState<boolean>(collisionState)
+  const [isCollision, setIsCollision] = useRecoilStateRef<boolean>(collisionState)
 
   const playfieldRef = useRef<HTMLDivElement>(null)
 
@@ -86,10 +86,11 @@ export function App() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const updatedBody = updateBody(snakeBody.current, direction.current, snakeSize.current)
-      if (checkCollision(updatedBody)) setIsCollision(true)
+      if (checkCollision(snakeBody.current)) setIsCollision(true)
 
-      if (!isCollision) {
+      if (!isCollision.current) {
+        const updatedBody = updateBody(snakeBody.current, direction.current, snakeSize.current)
+
         setSnakeBody(updatedBody)
         setHeadPos(last(snakeBody.current)!)
         if (isEqual(headPos.current, fruitPosition.current)) {
@@ -114,7 +115,8 @@ export function App() {
         e,
         direction: direction.current,
         setDirection,
-        blockedDirection: blockedDirection.current
+        blockedDirection: blockedDirection.current,
+        isCollision: isCollision.current
       })
 
     window.addEventListener("keypress", (e) => wasdListenerFunction(e), false)
@@ -131,13 +133,13 @@ export function App() {
     }
     // I'm usingRefs
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tickrate, isCollision])
+  }, [tickrate, isCollision.current])
 
   return (
     <Container>
-      <Menu restart={ () => restart() }/>
-      <Playfield ref={ playfieldRef }/>
-      <Controls directionRef={ direction }/>
+      <Menu restart={() => restart()} />
+      <Playfield ref={playfieldRef} />
+      <Controls directionRef={direction} />
     </Container>
   )
 }

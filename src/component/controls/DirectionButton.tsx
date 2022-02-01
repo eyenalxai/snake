@@ -2,7 +2,7 @@ import { MutableRefObject } from "react"
 import { useRecoilValue, useSetRecoilState } from "recoil"
 import { Direction } from "../../type"
 import { isDirectionConflict, mapDirectionToWASD } from "../../util/direction"
-import { blockedDirectionState, directionState } from "../../recoil/atoms"
+import { blockedDirectionState, collisionState, directionState } from "../../recoil/atoms"
 
 interface DirectionButtonProps {
   buttonDirection: Direction
@@ -12,17 +12,17 @@ interface DirectionButtonProps {
 export function DirectionButton({ buttonDirection, directionRef }: DirectionButtonProps) {
   const setDirection = useSetRecoilState<Direction>(directionState)
   const blockedDirection = useRecoilValue(blockedDirectionState)
-  const disabled = isDirectionConflict(buttonDirection, directionRef.current) || buttonDirection === blockedDirection
+  const isCollision = useRecoilValue(collisionState)
+  const disabled =
+    isDirectionConflict(buttonDirection, directionRef.current) || buttonDirection === blockedDirection || isCollision
 
   return (
     <button
       disabled={disabled}
       onClick={() => {
-        if (buttonDirection !== blockedDirection) {
-          // eslint-disable-next-line no-param-reassign
-          directionRef.current = buttonDirection
-          setDirection(buttonDirection)
-        }
+        // eslint-disable-next-line no-param-reassign
+        directionRef.current = buttonDirection
+        setDirection(buttonDirection)
       }}
       type="button"
       className={`  

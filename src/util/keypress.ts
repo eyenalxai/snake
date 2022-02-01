@@ -24,12 +24,13 @@ export interface wasdListenerProps {
   // eslint-disable-next-line no-unused-vars
   setDirection: (dir: Direction) => void
   blockedDirection: Direction
+  isCollision: boolean
 }
 
-export function wasdListener({ e, direction, setDirection, blockedDirection }: wasdListenerProps) {
+export function wasdListener({ e, direction, setDirection, blockedDirection, isCollision }: wasdListenerProps) {
   const { code } = e
 
-  if (isValidKeypress(code, direction)) {
+  if (isValidKeypress(code, direction) && !isCollision) {
     switch (code) {
       case "KeyW":
         switchDirection(blockedDirection, setDirection, "up")
