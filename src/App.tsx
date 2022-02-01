@@ -86,13 +86,15 @@ export function App() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (checkCollision(snakeBody.current)) setIsCollision(true)
+      const updatedBody = updateBody(snakeBody.current, direction.current, snakeSize.current)
+      if (!isCollision.current && checkCollision(updatedBody)) {
+        setIsCollision(true)
+        setHeadPos(last(updatedBody)!)
+      }
 
       if (!isCollision.current) {
-        const updatedBody = updateBody(snakeBody.current, direction.current, snakeSize.current)
-
         setSnakeBody(updatedBody)
-        setHeadPos(last(snakeBody.current)!)
+        setHeadPos(last(updatedBody)!)
         if (isEqual(headPos.current, fruitPosition.current)) {
           const updatedScore = score + scoreAddition(prevHeadPos, fruitPosition.current, snakeSize.current, tickrate)
           setScore(updatedScore)
