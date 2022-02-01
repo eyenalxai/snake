@@ -93,17 +93,17 @@ export function App() {
         setSnakeBody(updatedBody)
         setHeadPos(last(snakeBody.current)!)
         if (isEqual(headPos.current, fruitPosition.current)) {
-          setSnakeSize(snakeSize.current + 1)
-          setPrevHeadPos(headPos.current)
-          setFruitPosition(generateFruitPosition(snakeBody.current))
-          setTickrate(decreaseTickrate(tickrate))
-
           const updatedScore = score + scoreAddition(prevHeadPos, fruitPosition.current, snakeSize.current, tickrate)
           setScore(updatedScore)
           if (updatedScore > maxScore) {
             setMaxScore(updatedScore)
             localStorage.setItem(LOCALSTORAGE_MAX_SCORE_KEY, String(updatedScore))
           }
+
+          setSnakeSize(snakeSize.current + 1)
+          setPrevHeadPos(headPos.current)
+          setFruitPosition(generateFruitPosition(snakeBody.current))
+          setTickrate(decreaseTickrate(tickrate))
         }
         setBlockedDirection(getOppositeDirection(direction.current))
       }
@@ -135,9 +135,9 @@ export function App() {
 
   return (
     <Container>
-      <Menu restart={() => restart()} />
-      <Playfield ref={playfieldRef} />
-      <Controls directionRef={direction} />
+      <Menu restart={ () => restart() }/>
+      <Playfield ref={ playfieldRef }/>
+      <Controls directionRef={ direction }/>
     </Container>
   )
 }
