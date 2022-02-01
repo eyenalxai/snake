@@ -11,6 +11,14 @@ export const TICKRATE_MULTIPLIER = 0.97
 
 export const LOCALSTORAGE_MAX_SCORE_KEY = "max-score"
 
-export const GITHUB_URL = "https://github.com/tionsverryful/snake"
-
 export const STARTING_DIRECTION: Direction = "up"
+
+const GITHUB_URL = "https://github.com/tionsverryful/snake"
+export const CONSOLE_MESSAGE = `%c Source: ${GITHUB_URL}`
+export const CONSOLE_MESSAGE_STYLES = [
+  "font-size: 12px",
+  "font-family: monospace",
+  "display: inline-block",
+  "padding: 0.3em 5em",
+  "border: 1px solid;"
+].join(";")

@@ -23,7 +23,8 @@ import { Direction, Position } from "./type"
 import { Controls } from "./component/controls/Controls"
 import { Menu } from "./component/menu/Menu"
 import {
-  GITHUB_URL,
+  CONSOLE_MESSAGE,
+  CONSOLE_MESSAGE_STYLES,
   LOCALSTORAGE_MAX_SCORE_KEY,
   STARTING_BODY_POSITION,
   STARTING_DIRECTION,
@@ -86,7 +87,7 @@ export function App() {
   useEffect(() => {
     if (!sourceUrlShown) {
       // eslint-disable-next-line no-console
-      console.log("Source code:", GITHUB_URL)
+      console.log(CONSOLE_MESSAGE, CONSOLE_MESSAGE_STYLES)
       setSourceUrlShown(true)
     }
 
