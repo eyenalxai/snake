@@ -72,7 +72,7 @@ export function App() {
 
   const restart = () => {
     if (playfieldRef.current) playfieldRef.current.focus()
-
+    setIsCollision(false)
     setDirection(STARTING_DIRECTION)
     setBlockedDirection(getOppositeDirection(STARTING_DIRECTION))
 
@@ -83,7 +83,6 @@ export function App() {
 
     setTickrate(STARTING_TICKRATE)
     setScore(0)
-    setIsCollision(false)
   }
 
   const wasdListenerFunction = (e: KeyboardEvent) =>
