@@ -1,4 +1,4 @@
-import { Direction } from "../type"
+import { Direction } from "../type";
 
 // eslint-disable-next-line consistent-return
 export function getBorderSide(direction: Direction): string {

@@ -1,9 +1,6 @@
 module.exports = {
   darkMode: "media",
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}"
-  ],
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   safelist: [
     "text-2xl",
     "text-3xl",
