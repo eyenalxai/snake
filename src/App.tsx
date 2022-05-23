@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from "react";
-import { isEqual, last } from "lodash";
-import { useRecoilState } from "recoil";
-import { Container } from "./component/Container";
-import { Playfield } from "./component/playfield/Playfield";
+import { useEffect, useRef, useState } from "react"
+import { isEqual, last } from "lodash"
+import { useRecoilState } from "recoil"
+import { Container } from "./component/Container"
+import { Playfield } from "./component/playfield/Playfield"
 import {
   blockedDirectionState,
   collisionState,
@@ -17,12 +17,12 @@ import {
   snakeSizeState,
   tickrateState,
   useRecoilStateRef
-} from "./recoil/atoms";
-import { checkCollision, updateBody } from "./util/body";
-import { escapeListener, wasdListener } from "./util/keypress";
-import { Direction, Position } from "./type";
-import { Controls } from "./component/controls/Controls";
-import { Menu } from "./component/menu/Menu";
+} from "./recoil/atoms"
+import { checkCollision, updateBody } from "./util/body"
+import { escapeListener, wasdListener } from "./util/keypress"
+import { Direction, Position } from "./type"
+import { Controls } from "./component/controls/Controls"
+import { Menu } from "./component/menu/Menu"
 import {
   CONSOLE_MESSAGE,
   CONSOLE_MESSAGE_STYLES,
@@ -31,10 +31,10 @@ import {
   STARTING_DIRECTION,
   STARTING_SNAKE_SIZE,
   STARTING_TICKRATE
-} from "./config";
-import { scoreAddition } from "./util/score";
-import { generateFruitPosition } from "./util/position";
-import { decreaseTickrate } from "./util/other";
+} from "./config"
+import { scoreAddition } from "./util/score"
+import { generateFruitPosition } from "./util/position"
+import { decreaseTickrate } from "./util/other"
 
 // eslint-disable-next-line consistent-return
 export function getOppositeDirection(direction: Direction): Direction {

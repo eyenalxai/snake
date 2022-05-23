@@ -13,7 +13,7 @@ export const LOCALSTORAGE_MAX_SCORE_KEY = "max-score"
 
 export const STARTING_DIRECTION: Direction = "up"
 
-const GITHUB_URL = "https://github.com/tionsverryful/snake"
+const GITHUB_URL = "https://github.com/eyenalxai/snake"
 export const CONSOLE_MESSAGE = `%c Source: ${GITHUB_URL}`
 export const CONSOLE_MESSAGE_STYLES = [
   "font-size: 12px",
