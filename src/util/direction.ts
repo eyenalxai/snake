@@ -51,3 +51,18 @@ export function mapDirectionToWASD(direction: Direction) {
       return "D"
   }
 }
+
+// eslint-disable-next-line consistent-return
+export function getOppositeDirection(direction: Direction): Direction {
+  // eslint-disable-next-line default-case
+  switch (direction) {
+    case "up":
+      return "down"
+    case "left":
+      return "right"
+    case "right":
+      return "left"
+    case "down":
+      return "up"
+  }
+}

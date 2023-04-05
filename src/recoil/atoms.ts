@@ -4,8 +4,8 @@ import { last } from "lodash"
 import { Direction, Position } from "../type"
 import { STARTING_BODY_POSITION, STARTING_DIRECTION, STARTING_SNAKE_SIZE, STARTING_TICKRATE } from "../config"
 import { generateFruitPosition } from "../util/position"
-import { getOppositeDirection } from "../App"
 import { getScoreFromLocalStorage } from "../util/score"
+import { getOppositeDirection } from "../util/direction"
 
 export function useRecoilStateRef<T>(recoilState: RecoilState<T>): [MutableRefObject<T>, SetterOrUpdater<T>] {
   const [state, setState] = useRecoilState(recoilState)
